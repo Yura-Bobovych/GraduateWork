@@ -40,4 +40,5 @@ export class BaseExervisePageComponent implements OnInit {
         .fill({Correct: false, Clicked: false});
     });
 
+  }
 }

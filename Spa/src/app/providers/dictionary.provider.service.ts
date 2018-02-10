@@ -22,7 +22,7 @@ export class DictionaryProviderService {
       this.GetDictioanryList();
     }
   }
-  
+
   GetDictioanryList() {
     this.httpHelper.GetAuthorize(CONFIG.Services.WordsApi.BaseUrl + CONFIG.Services.WordsApi.GetDictionariesList).subscribe(res => {
       this.DictionaryList = JSON.parse(res.text());
@@ -32,7 +32,8 @@ export class DictionaryProviderService {
     });
   }
   GetDictionatryData(dictName: string): Observable<Array<ApiWordModel>> {
-    return this.httpHelper.GetAuthorize(CONFIG.Services.WordsApi.BaseUrl + CONFIG.Services.WordsApi.GetDictionaryData, {'dictionaryName': dictName})
+    return this.httpHelper.
+    GetAuthorize(CONFIG.Services.WordsApi.BaseUrl + CONFIG.Services.WordsApi.GetDictionaryData, {'dictionaryName': dictName})
     .map(res => {
       const dict = JSON.parse(res.text());
       console.log(dict);
