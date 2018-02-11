@@ -8,30 +8,66 @@ import { DictioanyPageComponent } from '../components/page-components/dictioany-
 
 @Injectable()
 export class DictionaryProviderService {
-  DictionaryList: Array<string>;
+  _dictionaryList: Array<string>;
+  _dictionaryContainer: Array<Array<ApiWordModel>>;
+  qwe = 0;
+  tryGetList = false;
+  tryGetContainer = false;
+  DictionaryContainer;
 
-  DictionaryContainer: Array<Array<ApiWordModel>>;
+   get DictionaryList(): Array<string> {
+    console.log('get DictionaryList' + this.qwe++ + this.tryGetList);
+    if (this._dictionaryList) {
+      return this._dictionaryList;
+    } else {
+      if (!this.tryGetList) {
+        this.tryGetList = true;
+        this.GetDictioanryList().subscribe();
+        console.log('get dict list from api');
+      }
+    }
+    return [];
+  }
+  set DictionaryList(value: Array<string> ) {
+    this._dictionaryList = value;
+  }
 
   constructor(private httpHelper: HttpHelper) {
-    if (this.DictionaryContainer == null) {
-      this.DictionaryContainer = new Array<Array<ApiWordModel>>();
+    if (this._dictionaryContainer == null) {
+      this._dictionaryContainer = new Array<Array<ApiWordModel>>();
     }
-    this.GetDictioanryList();
-    if (!this.DictionaryList) {
-      this.DictionaryList = [];
-      this.GetDictioanryList();
-    }
+
+    this.DictionaryContainer = new Proxy(this._dictionaryContainer, {
+      get: function(target, name) {
+        if (target) {
+          if (target[name]) {
+            return target[name];
+          }
+        } else {
+          if (!this.tryGetContainer) {
+            this.tryGetContainer = true;
+           this.GetDictionaryData(name);
+          }
+        }
+        return [];
+      },
+      set: function(target, prop, value) {
+        target[prop] = value;
+        return true;
+      }
+    });
   }
 
   GetDictioanryList() {
-    this.httpHelper.GetAuthorize(CONFIG.Services.WordsApi.BaseUrl + CONFIG.Services.WordsApi.GetDictionariesList).subscribe(res => {
+    return this.httpHelper.GetAuthorize(CONFIG.Services.WordsApi.BaseUrl + CONFIG.Services.WordsApi.GetDictionariesList).map(res => {
       this.DictionaryList = JSON.parse(res.text());
       for (const item of JSON.parse(res.text())) {
         this.DictionaryContainer[item] = null;
       }
+      return  JSON.parse(res.text());
     });
   }
-  GetDictionatryData(dictName: string): Observable<Array<ApiWordModel>> {
+  GetDictionaryData(dictName: string): Observable<Array<ApiWordModel>> {
     return this.httpHelper.
     GetAuthorize(CONFIG.Services.WordsApi.BaseUrl + CONFIG.Services.WordsApi.GetDictionaryData, {'dictionaryName': dictName})
     .map(res => {

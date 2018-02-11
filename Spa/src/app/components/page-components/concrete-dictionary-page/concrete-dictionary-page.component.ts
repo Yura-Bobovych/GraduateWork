@@ -24,7 +24,7 @@ export class ConcreteDictionaryPageComponent implements OnInit {
   getDictionaryData() {
     console.log(this.dictPorovider.DictionaryList.includes(this.dictionaryName));
     if (this.dictPorovider.DictionaryList.includes(this.dictionaryName)) {
-      this.dictPorovider.GetDictionatryData(this.dictionaryName).subscribe(res => {
+      this.dictPorovider.GetDictionaryData(this.dictionaryName).subscribe(res => {
         this.dictionatyData = res;
       });
     }

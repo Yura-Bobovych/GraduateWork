@@ -17,11 +17,13 @@ export class SignInComponent  {
     this.httphelper.Get(CONFIG.Services.AuthApi.BaseUrl + CONFIG.Services.AuthApi.GetAuthToken).subscribe(res => {
       this.localStorageService.authToken = res.text();
       alert(this.buttonClass);
+      location.reload();
     });
   }
 
   LogOut() {
     this.localStorageService.authTokenClean();
+    location.reload();
   }
 
 }
